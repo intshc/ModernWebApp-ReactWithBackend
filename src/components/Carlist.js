@@ -4,6 +4,8 @@ import {DataGrid} from "@mui/x-data-grid";
 import Snackbar from "@mui/material/Snackbar";
 import AddCar from "./AddCar"
 import EditCar from "./EditCar";
+import {IconButton, Stack} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 function Carlist() {
   const [cars, setCars] = useState([]);
 
@@ -47,9 +49,10 @@ function Carlist() {
       sortable: false,
       filterable: false,
       renderCell: row =>
-              <button
-                      onClick={(() => onDelClick(row.id))}>Delete
-              </button>
+              <IconButton
+                      onClick={(() => onDelClick(row.id))}>
+                <DeleteIcon color={"error"}/>
+              </IconButton>
     }
   ];
   useEffect(() => {
@@ -100,7 +103,9 @@ function Carlist() {
   }
   return (
           <React.Fragment>
-            <AddCar addCar={addCar}/>
+            <Stack mt={2} mb={2}>
+              <AddCar addCar={addCar}/>
+            </Stack>
             <div>
               <DataGrid
                       rows={cars}
