@@ -6,13 +6,18 @@ import AddCar from "./AddCar"
 import EditCar from "./EditCar";
 import {IconButton, Stack} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+
 function Carlist() {
   const [cars, setCars] = useState([]);
 
   const onDelClick = (url) => {
 
     if (window.confirm("Are you sure to delete?")) {
-      fetch(url, {method: 'DELETE'})
+      const token = sessionStorage.getItem("jwt");
+      fetch(url, {
+        method: 'DELETE',
+        headers: {'Authorization': token}
+      })
               .then(response => {
                 if (response.ok) {
                   fetchCars();
@@ -40,8 +45,8 @@ function Carlist() {
       filterable: false,
       renderCell: row =>
               <EditCar
-              data={row}
-              updateCar={updateCar}/>
+                      data={row}
+                      updateCar={updateCar}/>
     },
     {
       field: '_links.self.href',
@@ -60,7 +65,13 @@ function Carlist() {
   }, []);
 
   const fetchCars = () => {
-    fetch(SERVER_URL + 'api/cars')
+    //세션 저장소에서 토큰을 읽고
+    //Authorization 헤더에 이를 포함한다.
+    const token = sessionStorage.getItem("jwt");
+
+    fetch(SERVER_URL + 'api/cars', {
+      headers: {'Authorization': token}
+    })
             .then(response => response.json())
             .then(data => setCars(data._embedded.cars))
             .catch(err => console.error(err));
@@ -68,10 +79,15 @@ function Carlist() {
 
   //새로운 자동차 추가
   const addCar = (car) => {
+    const token = sessionStorage.getItem("jwt");
+
     fetch(SERVER_URL + 'api/cars',
             {
               method: 'POST',
-              headers: {'Content-Type': 'application/json'},
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+              },
               body: JSON.stringify(car)
             })
             .then(response => {
@@ -84,18 +100,22 @@ function Carlist() {
             .catch(err => console.error(err))
   }
   //자동차 업데이트
-  const updateCar = (car, link) =>{
+  const updateCar = (car, link) => {
+    const token = sessionStorage.getItem("jwt");
+
     fetch(link,
             {
               method: 'PUT',
-              headers: {'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+              },
               body: JSON.stringify(car)
             })
             .then(response => {
-              if(response.ok){
+              if (response.ok) {
                 fetchCars();
-              }
-              else {
+              } else {
                 alert('Something went wrong!');
               }
             })
