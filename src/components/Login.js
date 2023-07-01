@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {SERVER_URL} from "../constants";
 import {Button, Stack, TextField} from "@mui/material";
 import Carlist from "./Carlist";
-
+import Snackbar from "@mui/material/Snackbar";
 function Login() {
 
   const [user, setUser] = useState({
@@ -16,6 +16,8 @@ function Login() {
     setUser({...user, [event.target.name]: event.target.value});
   }
 
+  const [open, setOpen] = useState(false);
+
   const login = () => {
     fetch(SERVER_URL + 'login', {
       method: 'POST',
@@ -27,6 +29,9 @@ function Login() {
               if (jwtToken !== null) {
                 sessionStorage.setItem("jwt", jwtToken);
                 setAuth(true);
+              }
+              else {
+                setOpen(true);
               }
             })
             .catch(err => console.error(err))
@@ -54,6 +59,12 @@ function Login() {
                   Login
                 </Button>
               </Stack>
+              <Snackbar
+                open={open}
+                autoHideDuration={3000}
+                onClose={()=> setOpen(false)}
+                message={"Login failed: check your username and password"}
+                />
             </div>
     );
   }
