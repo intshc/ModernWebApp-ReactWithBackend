@@ -1,1 +1,1 @@
-export const SERVER_URL='http://localhost:8080/';
+export const SERVER_URL='https://port-0-modernwebapp-20zynm2mljldcyy2.sel4.cloudtype.app/';
